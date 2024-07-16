@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.compass.ecommerce.dtos.ProductRecordDto;
+import com.compass.ecommerce.dtos.ProductDto;
 import com.compass.ecommerce.models.ProductModel;
 import com.compass.ecommerce.services.ProductService;
 
@@ -22,8 +22,8 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductModel> addProduct(@RequestBody @Valid ProductRecordDto productRecordDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productRecordDto));
+    public ResponseEntity<ProductModel> addProduct(@RequestBody @Valid ProductDto productDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productDto));
     }
 
     @GetMapping
@@ -31,6 +31,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
     }
 
+ 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOneProduct(@PathVariable(value = "id") UUID id) {
         return productService.getOneProduct(id)
@@ -40,7 +41,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable(value = "id") UUID id,
-                                                @RequestBody @Valid ProductRecordDto productRecordDto) {
+                                                @RequestBody @Valid ProductDto productRecordDto) {
         return productService.updateProduct(id, productRecordDto)
                 .<ResponseEntity<Object>>map(product -> ResponseEntity.status(HttpStatus.OK).body(product))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Produto não encontrado."));

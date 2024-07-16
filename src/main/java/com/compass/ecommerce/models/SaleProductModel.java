@@ -2,14 +2,21 @@ package com.compass.ecommerce.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,82 +26,88 @@ public class SaleProductModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sale_id")
     private SaleModel sale;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private ProductModel product;
 
     private int amount;
-
-    @Column(name = "unit_price")
-    private double unitPrice;
-
-    @Column(name = "creation_date")
+    
     private LocalDateTime creationDate;
-
-    @Column(name = "update_date")
     private LocalDateTime updateDate;
-
-
-    public Long getId() {
-        return id;
+    
+    @PrePersist
+    protected void onCreate() {
+        creationDate = LocalDateTime.now();
+        updateDate = LocalDateTime.now();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @PreUpdate
+    protected void onUpdate() {
+        updateDate = LocalDateTime.now();
     }
 
-    public SaleModel getSale() {
-        return sale;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public void setSale(SaleModel sale) {
-        this.sale = sale;
-    }
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
-    public ProductModel getProduct() {
-        return product;
-    }
+	public SaleModel getSale() {
+		return sale;
+	}
 
-    public void setProduct(ProductModel product) {
-        this.product = product;
-    }
+	public void setSale(SaleModel sale) {
+		this.sale = sale;
+	}
 
-    public int getAmount() {
-        return amount;
-    }
+	public ProductModel getProduct() {
+		return product;
+	}
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
+	public void setProduct(ProductModel product) {
+		this.product = product;
+	}
 
-    public double getUnitPrice() {
-        return unitPrice;
-    }
+	public Integer getAmount() {
+		return amount;
+	}
 
-    public void setUnitPrice(double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
+	public void setAmount(Integer amount) {
+		this.amount = amount;
+	}
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
 
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
-    }
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
 
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	
+    // Getters and setters
+	
+	
+    
+    
 }

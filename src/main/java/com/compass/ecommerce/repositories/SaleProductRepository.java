@@ -1,12 +1,13 @@
 package com.compass.ecommerce.repositories;
 
-import com.compass.ecommerce.models.SaleProductModel;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.compass.ecommerce.models.SaleProductModel;
 
 @Repository
-public interface SaleProductRepository extends JpaRepository<SaleProductModel, Long> {
+public interface SaleProductRepository extends JpaRepository<SaleProductModel, UUID> {
    
 }

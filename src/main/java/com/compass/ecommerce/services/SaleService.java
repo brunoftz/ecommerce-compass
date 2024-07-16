@@ -1,13 +1,18 @@
 package com.compass.ecommerce.services;
 
-import com.compass.ecommerce.models.SaleModel;
-import com.compass.ecommerce.repositories.SaleRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.compass.ecommerce.dtos.SaleDto;
+import com.compass.ecommerce.dtos.SaleProductDto;
+import com.compass.ecommerce.models.ProductModel;
+import com.compass.ecommerce.models.SaleModel;
+import com.compass.ecommerce.models.SaleProductModel;
+import com.compass.ecommerce.repositories.ProductRepository;
+import com.compass.ecommerce.repositories.SaleRepository;
 
 @Service
 public class SaleService {
@@ -15,34 +20,32 @@ public class SaleService {
     @Autowired
     private SaleRepository saleRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Transactional
+    public SaleModel createSale(SaleDto saleDto) {
+        SaleModel saleModel = new SaleModel();
+        saleModel.setSaleDate(saleDto.getSaleDate());
+        saleModel.setDescription(saleDto.getDescription());
+
+        double totalPrice = 0.0;
+        for (SaleProductDto saleProductDto : saleDto.getProducts()) {
+            ProductModel product = productRepository.findById(saleProductDto.getId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            SaleProductModel saleProductModel = new SaleProductModel();
+            saleProductModel.setSale(saleModel);
+            saleProductModel.setProduct(product);
+            saleProductModel.setAmount(saleProductDto.getAmount());
+            totalPrice += product.getPrice() * saleProductDto.getAmount();
+            saleModel.getSaleProducts().add(saleProductModel);
+        }
+
+        saleModel.setTotalPrice(totalPrice);
+        return saleRepository.save(saleModel);
+    }
+    
     public List<SaleModel> getAllSales() {
         return saleRepository.findAll();
-    }
-
-    public Optional<SaleModel> getSaleById(Long id) {
-        return saleRepository.findById(id);
-    }
-
-    public SaleModel createSale(SaleModel sale) {
-        sale.setCreationDate(LocalDateTime.now());
-        sale.setUpdateDate(LocalDateTime.now());
-        return saleRepository.save(sale);
-    }
-
-    public SaleModel updateSale(Long id, SaleModel updatedSale) {
-        Optional<SaleModel> saleOptional = saleRepository.findById(id);
-        if (saleOptional.isPresent()) {
-            SaleModel existingSale = saleOptional.get();
-            existingSale.setTotalPrice(updatedSale.getTotalPrice());
-            existingSale.setSaleDate(updatedSale.getSaleDate());
-            existingSale.setDescription(updatedSale.getDescription());
-            existingSale.setUpdateDate(LocalDateTime.now());
-            return saleRepository.save(existingSale);
-        }
-        return null; // Or throw an exception
-    }
-
-    public void deleteSale(Long id) {
-        saleRepository.deleteById(id);
     }
 }

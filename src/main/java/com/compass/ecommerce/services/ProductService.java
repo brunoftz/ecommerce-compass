@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.compass.ecommerce.dtos.ProductRecordDto;
+import com.compass.ecommerce.dtos.ProductDto;
 import com.compass.ecommerce.models.ProductModel;
 import com.compass.ecommerce.repositories.ProductRepository;
 
@@ -18,7 +18,7 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public ProductModel addProduct(ProductRecordDto productRecordDto) {
+    public ProductModel addProduct(ProductDto productRecordDto) {
         var productModel = new ProductModel();
         BeanUtils.copyProperties(productRecordDto, productModel);
         return productRepository.save(productModel);
@@ -32,7 +32,7 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public Optional<ProductModel> updateProduct(UUID id, ProductRecordDto productRecordDto) {
+    public Optional<ProductModel> updateProduct(UUID id, ProductDto productRecordDto) {
         Optional<ProductModel> productO = productRepository.findById(id);
         if (productO.isPresent()) {
             var productModel = productO.get();
