@@ -34,6 +34,7 @@ public class SaleProductModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Ignora serialização do proxy Hibernate
     private ProductModel product;
 
     private int amount;
@@ -41,10 +42,17 @@ public class SaleProductModel implements Serializable {
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
     
+
+    private Boolean status;
+    
     @PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();
         updateDate = LocalDateTime.now();
+        
+        if(status == null) {
+        	status = true;
+        }
     }
 
     @PreUpdate

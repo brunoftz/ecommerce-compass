@@ -28,12 +28,12 @@ public class SaleProductDto {
     }
 
     public static SaleProductDto fromModel(SaleProductModel saleProductModel) {
-        return new SaleProductDto(
-            saleProductModel.getId(),
-            saleProductModel.getAmount(),
-            saleProductModel.getSale().getId()
-        );
+        SaleProductDto dto = new SaleProductDto();
+        dto.setId(saleProductModel.getId());
+        dto.setSaleId(saleProductModel.getSale().getId()); // Assuming getSale() returns SaleModel
+        return dto;
     }
+
 
     public UUID getId() {
         return id;

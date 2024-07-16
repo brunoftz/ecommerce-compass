@@ -42,9 +42,6 @@ public class ProductModel implements Serializable {
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SaleProductModel> saleProducts;
-    
     @PrePersist
     protected void onCreate() {
         creationDate = LocalDateTime.now();
@@ -114,11 +111,5 @@ public class ProductModel implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public List<SaleProductModel> getSaleProducts() {
-        return saleProducts;
-    }
-
-    public void setSaleProducts(List<SaleProductModel> saleProducts) {
-        this.saleProducts = saleProducts;
-    }
+    
 }
