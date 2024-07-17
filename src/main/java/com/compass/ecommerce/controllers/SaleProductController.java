@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.compass.ecommerce.dtos.SaleProductDto;
 import com.compass.ecommerce.models.SaleProductModel;
 import com.compass.ecommerce.services.SaleProductService;
 
 @RestController
-@RequestMapping("/api/sale-products")
+@RequestMapping("/sale-products")
 public class SaleProductController {
 
     @Autowired
@@ -55,5 +57,30 @@ public class SaleProductController {
     public ResponseEntity<Void> deleteSaleProduct(@PathVariable UUID id) {
         saleProductService.deleteSaleProduct(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<String> deactivateSaleProduct(@PathVariable UUID id) {
+        saleProductService.deactivateSaleProduct(id);
+        return ResponseEntity.ok("SaleProduct deactivated successfully");
+    }
+    
+    @PutMapping("/{id}/reactivate")
+    public ResponseEntity<String> reactivateSaleProduct(@PathVariable UUID id) {
+        saleProductService.reactivateSaleProduct(id);
+        return ResponseEntity.ok("SaleProduct reactivated successfully");
+    }
+    
+    @PostMapping("/{saleId}/add-product")
+    public ResponseEntity<?> addProductToSale(
+            @PathVariable("saleId") UUID saleId,
+            @RequestBody SaleProductDto saleProductDto) {
+
+        try {
+            SaleProductModel saleProduct = saleProductService.addProductToSale(saleId, saleProductDto);
+            return ResponseEntity.ok(saleProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

@@ -55,7 +55,19 @@ public class SaleProductModel implements Serializable {
         }
     }
 
-    @PreUpdate
+    public Boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
+
+	@PreUpdate
     protected void onUpdate() {
         updateDate = LocalDateTime.now();
     }

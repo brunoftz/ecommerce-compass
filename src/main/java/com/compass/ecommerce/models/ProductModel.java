@@ -34,8 +34,6 @@ public class ProductModel implements Serializable {
     @NotNull
     private Double price;
 
-    private Boolean status;
-
     @NotNull
     private Long stockAmount;
 
@@ -79,13 +77,6 @@ public class ProductModel implements Serializable {
         this.price = price;
     }
 
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
     public Long getStockAmount() {
         return stockAmount;
