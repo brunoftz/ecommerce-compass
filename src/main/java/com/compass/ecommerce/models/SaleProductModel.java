@@ -34,7 +34,7 @@ public class SaleProductModel implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", referencedColumnName = "id")
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" }) // Ignora serialização do proxy Hibernate
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" }) 
 	private ProductModel product;
 
 	private int amount;
@@ -123,6 +123,6 @@ public class SaleProductModel implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	// Getters and setters
+	
 
 }
