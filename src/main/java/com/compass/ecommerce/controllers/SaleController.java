@@ -1,9 +1,11 @@
 package com.compass.ecommerce.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,9 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.compass.ecommerce.dtos.MonthlyReportDto;
 import com.compass.ecommerce.dtos.SaleDto;
+import com.compass.ecommerce.dtos.WeeklyReportDto;
 import com.compass.ecommerce.models.SaleModel;
 import com.compass.ecommerce.services.SaleService;
 
@@ -58,5 +63,28 @@ public class SaleController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @GetMapping("/filter-by-date")
+    public List<SaleModel> getSalesByDate(
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return saleService.getSalesByDate(startDate, endDate);
+    }
+    
+    @GetMapping("/report/monthly")
+    public MonthlyReportDto getMonthlyReport(
+            @RequestParam(value = "month", required = true) int month,
+            @RequestParam(value = "year", required = true) int year) {
+        return saleService.getMonthlyReport(month, year);
+    }
+
+    @GetMapping("/report/weekly")
+    public WeeklyReportDto getWeeklyReport(
+            @RequestParam(value = "weekOfMonth", required = true) int weekOfMonth,
+            @RequestParam(value = "month", required = true) int month,
+            @RequestParam(value = "year", required = true) int year) {
+        return saleService.getWeeklyReport(weekOfMonth, month, year);
+    }
+
 
 }

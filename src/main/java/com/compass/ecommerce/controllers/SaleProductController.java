@@ -71,16 +71,6 @@ public class SaleProductController {
         return ResponseEntity.ok("SaleProduct reactivated successfully");
     }
     
-    @PostMapping("/{saleId}/add-product")
-    public ResponseEntity<?> addProductToSale(
-            @PathVariable("saleId") UUID saleId,
-            @RequestBody SaleProductDto saleProductDto) {
 
-        try {
-            SaleProductModel saleProduct = saleProductService.addProductToSale(saleId, saleProductDto);
-            return ResponseEntity.ok(saleProduct);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+
 }

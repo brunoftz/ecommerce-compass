@@ -1,15 +1,25 @@
 package com.compass.ecommerce.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.compass.ecommerce.dtos.MonthlyReportDto;
 import com.compass.ecommerce.dtos.SaleDto;
 import com.compass.ecommerce.dtos.SaleProductDto;
+import com.compass.ecommerce.dtos.WeeklyReportDto;
 import com.compass.ecommerce.models.ProductModel;
 import com.compass.ecommerce.models.SaleModel;
 import com.compass.ecommerce.models.SaleProductModel;
@@ -103,4 +113,125 @@ public class SaleService {
 			throw new RuntimeException("Sale not found with id: " + saleId);
 		}
 	}
+
+	public List<SaleModel> getSalesByDate(LocalDate startDate, LocalDate endDate) {
+		LocalDateTime startDateTime = null;
+		LocalDateTime endDateTime = null;
+
+		if (startDate != null) {
+			startDateTime = startDate.atStartOfDay();
+		}
+
+		if (endDate != null) {
+			endDateTime = endDate.atTime(LocalTime.MAX);
+		}
+
+		if (startDateTime != null && endDateTime != null) {
+			return saleRepository.findAllBySaleDateBetween(startDateTime, endDateTime);
+		} else if (startDateTime != null) {
+			return saleRepository.findAllBySaleDateBetween(startDateTime, startDateTime.plusDays(1).minusNanos(1));
+		} else if (endDateTime != null) {
+			return saleRepository.findAllBySaleDateBetween(endDateTime.toLocalDate().atStartOfDay(), endDateTime);
+		} else {
+			throw new RuntimeException("At least one date parameter must be provided.");
+		}
+	}
+
+	public MonthlyReportDto getMonthlyReport(int month, int year) {
+		LocalDateTime startDate = LocalDateTime.of(year, month, 1, 0, 0);
+		LocalDateTime endDate = startDate.toLocalDate().with(TemporalAdjusters.lastDayOfMonth()).atTime(23, 59, 59);
+		List<SaleModel> sales = saleRepository.findAllBySaleDateBetween(startDate, endDate);
+
+		return generateMonthlyReport(sales, month, year);
+	}
+
+	public WeeklyReportDto getWeeklyReport(int weekOfMonth, int month, int year) {
+		LocalDate startOfMonth = LocalDate.of(year, month, 1);
+		LocalDate startOfWeek = startOfMonth.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+				.plusWeeks(weekOfMonth - 1);
+		LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+		LocalDateTime startDate = startOfWeek.atStartOfDay();
+		LocalDateTime endDate = endOfWeek.atTime(23, 59, 59);
+
+		List<SaleModel> sales = saleRepository.findAllBySaleDateBetween(startDate, endDate);
+
+		return generateWeeklyReport(sales, weekOfMonth, month, year);
+	}
+
+	private MonthlyReportDto generateMonthlyReport(List<SaleModel> sales, int month, int year) {
+	    long totalProductsSold = sales.stream()
+	            .flatMap(sale -> sale.getSaleProducts().stream())
+	            .filter(SaleProductModel::getStatus)  // Only active products
+	            .mapToLong(SaleProductModel::getAmount)
+	            .sum();
+
+	    Map<String, Long> productSales = sales.stream()
+	            .flatMap(sale -> sale.getSaleProducts().stream())
+	            .filter(SaleProductModel::getStatus)  // Only active products
+	            .collect(Collectors.groupingBy(
+	                    saleProduct -> saleProduct.getProduct().getName(),
+	                    Collectors.summingLong(SaleProductModel::getAmount)
+	            ));
+
+	    String bestSellingProduct = productSales.entrySet().stream()
+	            .max(Map.Entry.comparingByValue())
+	            .map(Map.Entry::getKey)
+	            .orElse("No products sold");
+
+	    double totalSalesValue = sales.stream()
+	            .mapToDouble(sale -> sale.getSaleProducts().stream()
+	                    .filter(SaleProductModel::getStatus)  // Only active products
+	                    .mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount())
+	                    .sum())
+	            .sum();
+
+	    MonthlyReportDto report = new MonthlyReportDto();
+	    report.setMonth(month);
+	    report.setYear(year);
+	    report.setTotalProductsSold(totalProductsSold);
+	    report.setBestSellingProduct(bestSellingProduct);
+	    report.setTotalSalesValue(totalSalesValue);
+	    return report;
+	}
+
+
+	private WeeklyReportDto generateWeeklyReport(List<SaleModel> sales, int weekOfMonth, int month, int year) {
+	    long totalProductsSold = sales.stream()
+	            .flatMap(sale -> sale.getSaleProducts().stream())
+	            .filter(SaleProductModel::getStatus)  // Only active products
+	            .mapToLong(SaleProductModel::getAmount)
+	            .sum();
+
+	    Map<String, Long> productSales = sales.stream()
+	            .flatMap(sale -> sale.getSaleProducts().stream())
+	            .filter(SaleProductModel::getStatus)  // Only active products
+	            .collect(Collectors.groupingBy(
+	                    saleProduct -> saleProduct.getProduct().getName(),
+	                    Collectors.summingLong(SaleProductModel::getAmount)
+	            ));
+
+	    String bestSellingProduct = productSales.entrySet().stream()
+	            .max(Map.Entry.comparingByValue())
+	            .map(Map.Entry::getKey)
+	            .orElse("No products sold");
+
+	    double totalSalesValue = sales.stream()
+	            .mapToDouble(sale -> sale.getSaleProducts().stream()
+	                    .filter(SaleProductModel::getStatus)  // Only active products
+	                    .mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount())
+	                    .sum())
+	            .sum();
+
+	    WeeklyReportDto report = new WeeklyReportDto();
+	    report.setWeek(weekOfMonth);
+	    report.setMonth(month);
+	    report.setYear(year);
+	    report.setTotalProductsSold(totalProductsSold);
+	    report.setBestSellingProduct(bestSellingProduct);
+	    report.setTotalSalesValue(totalSalesValue);
+	    return report;
+	}
+
+
 }
