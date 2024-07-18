@@ -10,5 +10,5 @@ import com.compass.ecommerce.models.ProductModel;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductModel, UUID> {
-	 Optional<ProductModel> findById(UUID id);
+	Optional<ProductModel> findById(UUID id);
 }

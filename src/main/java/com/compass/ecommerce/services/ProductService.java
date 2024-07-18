@@ -26,7 +26,7 @@ public class ProductService {
 		return productRepository.save(productModel);
 	}
 
-	@Cacheable
+	
 	public List<ProductModel> getAllProducts() {
 		return productRepository.findAll();
 	}

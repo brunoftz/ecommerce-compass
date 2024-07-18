@@ -22,85 +22,83 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "products")
 public class ProductModel implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
 
-    @NotBlank
-    private String name;
+	@NotBlank
+	private String name;
 
-    @NotNull
-    private Double price;
+	@NotNull
+	private Double price;
 
-    @NotNull
-    private Long stockAmount;
+	@NotNull
+	private Long stockAmount;
 
-    private LocalDateTime creationDate;
-    private LocalDateTime updateDate;
+	private LocalDateTime creationDate;
+	private LocalDateTime updateDate;
 
-    @PrePersist
-    protected void onCreate() {
-        creationDate = LocalDateTime.now();
-        updateDate = LocalDateTime.now();
-    }
+	@PrePersist
+	protected void onCreate() {
+		creationDate = LocalDateTime.now();
+		updateDate = LocalDateTime.now();
+	}
 
-    @PreUpdate
-    protected void onUpdate() {
-        updateDate = LocalDateTime.now();
-    }
+	@PreUpdate
+	protected void onUpdate() {
+		updateDate = LocalDateTime.now();
+	}
 
-    // Getters and setters
+	// Getters and setters
 
-    public UUID getId() {
-        return id;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Double getPrice() {
-        return price;
-    }
+	public Double getPrice() {
+		return price;
+	}
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
+	public void setPrice(Double price) {
+		this.price = price;
+	}
 
+	public Long getStockAmount() {
+		return stockAmount;
+	}
 
-    public Long getStockAmount() {
-        return stockAmount;
-    }
+	public void setStockAmount(Long stockAmount) {
+		this.stockAmount = stockAmount;
+	}
 
-    public void setStockAmount(Long stockAmount) {
-        this.stockAmount = stockAmount;
-    }
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
 
-    public LocalDateTime getUpdateDate() {
-        return updateDate;
-    }
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.updateDate = updateDate;
+	}
 
-    public void setUpdateDate(LocalDateTime updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    
 }

@@ -22,40 +22,39 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "sale_products")
 public class SaleProductModel implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sale_id")
-    private SaleModel sale;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sale_id")
+	private SaleModel sale;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Ignora serialização do proxy Hibernate
-    private ProductModel product;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_id", referencedColumnName = "id")
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" }) // Ignora serialização do proxy Hibernate
+	private ProductModel product;
 
-    private int amount;
-    
-    private LocalDateTime creationDate;
-    private LocalDateTime updateDate;
-    
+	private int amount;
 
-    private Boolean status;
-    
-    @PrePersist
-    protected void onCreate() {
-        creationDate = LocalDateTime.now();
-        updateDate = LocalDateTime.now();
-        
-        if(status == null) {
-        	status = true;
-        }
-    }
+	private LocalDateTime creationDate;
+	private LocalDateTime updateDate;
 
-    public Boolean getStatus() {
+	private Boolean status;
+
+	@PrePersist
+	protected void onCreate() {
+		creationDate = LocalDateTime.now();
+		updateDate = LocalDateTime.now();
+
+		if (status == null) {
+			status = true;
+		}
+	}
+
+	public Boolean getStatus() {
 		return status;
 	}
 
@@ -68,9 +67,9 @@ public class SaleProductModel implements Serializable {
 	}
 
 	@PreUpdate
-    protected void onUpdate() {
-        updateDate = LocalDateTime.now();
-    }
+	protected void onUpdate() {
+		updateDate = LocalDateTime.now();
+	}
 
 	public UUID getId() {
 		return id;
@@ -124,10 +123,6 @@ public class SaleProductModel implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	
-    // Getters and setters
-	
-	
-    
-    
+	// Getters and setters
+
 }

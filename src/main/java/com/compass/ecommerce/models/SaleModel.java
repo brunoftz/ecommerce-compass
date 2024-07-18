@@ -22,36 +22,35 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "sales")
 public class SaleModel implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private UUID id;
 
-    private LocalDateTime saleDate;
+	private LocalDateTime saleDate;
 
-    private String description;
+	private String description;
 
-    private Double totalPrice;
+	private Double totalPrice;
 
-    private LocalDateTime creationDate;
-    private LocalDateTime updateDate;
+	private LocalDateTime creationDate;
+	private LocalDateTime updateDate;
 
-    
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("sale")
-    private Set<SaleProductModel> saleProducts = new HashSet<>();
+	@OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnoreProperties("sale")
+	private Set<SaleProductModel> saleProducts = new HashSet<>();
 
-    @PrePersist
-    protected void onCreate() {
-        creationDate = LocalDateTime.now();
-        updateDate = LocalDateTime.now();
-    }
+	@PrePersist
+	protected void onCreate() {
+		creationDate = LocalDateTime.now();
+		updateDate = LocalDateTime.now();
+	}
 
-    @PreUpdate
-    protected void onUpdate() {
-        updateDate = LocalDateTime.now();
-    }
+	@PreUpdate
+	protected void onUpdate() {
+		updateDate = LocalDateTime.now();
+	}
 
 	public UUID getId() {
 		return id;
@@ -112,6 +111,5 @@ public class SaleModel implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-    
-    
+
 }

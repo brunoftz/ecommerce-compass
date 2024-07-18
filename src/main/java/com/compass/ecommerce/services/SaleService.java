@@ -160,78 +160,60 @@ public class SaleService {
 	}
 
 	private MonthlyReportDto generateMonthlyReport(List<SaleModel> sales, int month, int year) {
-	    long totalProductsSold = sales.stream()
-	            .flatMap(sale -> sale.getSaleProducts().stream())
-	            .filter(SaleProductModel::getStatus)  // Only active products
-	            .mapToLong(SaleProductModel::getAmount)
-	            .sum();
+		long totalProductsSold = sales.stream().flatMap(sale -> sale.getSaleProducts().stream())
+				.filter(SaleProductModel::getStatus) // Only active products
+				.mapToLong(SaleProductModel::getAmount).sum();
 
-	    Map<String, Long> productSales = sales.stream()
-	            .flatMap(sale -> sale.getSaleProducts().stream())
-	            .filter(SaleProductModel::getStatus)  // Only active products
-	            .collect(Collectors.groupingBy(
-	                    saleProduct -> saleProduct.getProduct().getName(),
-	                    Collectors.summingLong(SaleProductModel::getAmount)
-	            ));
+		Map<String, Long> productSales = sales.stream().flatMap(sale -> sale.getSaleProducts().stream())
+				.filter(SaleProductModel::getStatus) // Only active products
+				.collect(Collectors.groupingBy(saleProduct -> saleProduct.getProduct().getName(),
+						Collectors.summingLong(SaleProductModel::getAmount)));
 
-	    String bestSellingProduct = productSales.entrySet().stream()
-	            .max(Map.Entry.comparingByValue())
-	            .map(Map.Entry::getKey)
-	            .orElse("No products sold");
+		String bestSellingProduct = productSales.entrySet().stream().max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey).orElse("No products sold");
 
-	    double totalSalesValue = sales.stream()
-	            .mapToDouble(sale -> sale.getSaleProducts().stream()
-	                    .filter(SaleProductModel::getStatus)  // Only active products
-	                    .mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount())
-	                    .sum())
-	            .sum();
+		double totalSalesValue = sales.stream()
+				.mapToDouble(sale -> sale.getSaleProducts().stream().filter(SaleProductModel::getStatus) // Only active
+																											// products
+						.mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount()).sum())
+				.sum();
 
-	    MonthlyReportDto report = new MonthlyReportDto();
-	    report.setMonth(month);
-	    report.setYear(year);
-	    report.setTotalProductsSold(totalProductsSold);
-	    report.setBestSellingProduct(bestSellingProduct);
-	    report.setTotalSalesValue(totalSalesValue);
-	    return report;
+		MonthlyReportDto report = new MonthlyReportDto();
+		report.setMonth(month);
+		report.setYear(year);
+		report.setTotalProductsSold(totalProductsSold);
+		report.setBestSellingProduct(bestSellingProduct);
+		report.setTotalSalesValue(totalSalesValue);
+		return report;
 	}
-
 
 	private WeeklyReportDto generateWeeklyReport(List<SaleModel> sales, int weekOfMonth, int month, int year) {
-	    long totalProductsSold = sales.stream()
-	            .flatMap(sale -> sale.getSaleProducts().stream())
-	            .filter(SaleProductModel::getStatus)  // Only active products
-	            .mapToLong(SaleProductModel::getAmount)
-	            .sum();
+		long totalProductsSold = sales.stream().flatMap(sale -> sale.getSaleProducts().stream())
+				.filter(SaleProductModel::getStatus) // Only active products
+				.mapToLong(SaleProductModel::getAmount).sum();
 
-	    Map<String, Long> productSales = sales.stream()
-	            .flatMap(sale -> sale.getSaleProducts().stream())
-	            .filter(SaleProductModel::getStatus)  // Only active products
-	            .collect(Collectors.groupingBy(
-	                    saleProduct -> saleProduct.getProduct().getName(),
-	                    Collectors.summingLong(SaleProductModel::getAmount)
-	            ));
+		Map<String, Long> productSales = sales.stream().flatMap(sale -> sale.getSaleProducts().stream())
+				.filter(SaleProductModel::getStatus) // Only active products
+				.collect(Collectors.groupingBy(saleProduct -> saleProduct.getProduct().getName(),
+						Collectors.summingLong(SaleProductModel::getAmount)));
 
-	    String bestSellingProduct = productSales.entrySet().stream()
-	            .max(Map.Entry.comparingByValue())
-	            .map(Map.Entry::getKey)
-	            .orElse("No products sold");
+		String bestSellingProduct = productSales.entrySet().stream().max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey).orElse("No products sold");
 
-	    double totalSalesValue = sales.stream()
-	            .mapToDouble(sale -> sale.getSaleProducts().stream()
-	                    .filter(SaleProductModel::getStatus)  // Only active products
-	                    .mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount())
-	                    .sum())
-	            .sum();
+		double totalSalesValue = sales.stream()
+				.mapToDouble(sale -> sale.getSaleProducts().stream().filter(SaleProductModel::getStatus) // Only active
+																											// products
+						.mapToDouble(sp -> sp.getProduct().getPrice() * sp.getAmount()).sum())
+				.sum();
 
-	    WeeklyReportDto report = new WeeklyReportDto();
-	    report.setWeek(weekOfMonth);
-	    report.setMonth(month);
-	    report.setYear(year);
-	    report.setTotalProductsSold(totalProductsSold);
-	    report.setBestSellingProduct(bestSellingProduct);
-	    report.setTotalSalesValue(totalSalesValue);
-	    return report;
+		WeeklyReportDto report = new WeeklyReportDto();
+		report.setWeek(weekOfMonth);
+		report.setMonth(month);
+		report.setYear(year);
+		report.setTotalProductsSold(totalProductsSold);
+		report.setBestSellingProduct(bestSellingProduct);
+		report.setTotalSalesValue(totalSalesValue);
+		return report;
 	}
-
 
 }

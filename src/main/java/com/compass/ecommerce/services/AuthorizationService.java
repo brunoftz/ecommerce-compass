@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import com.compass.ecommerce.repositories.UserRepository;
 
 @Service
-public class AuthorizationService implements UserDetailsService{
+public class AuthorizationService implements UserDetailsService {
 
-	
 	@Autowired
 	UserRepository repository;
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return repository.findByLogin(username);

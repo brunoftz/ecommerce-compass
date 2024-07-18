@@ -108,46 +108,45 @@ public class SaleProductService {
 			recalculateSaleTotalPrice(saleProduct.getSale());
 		}
 	}
-	
-	
+
 	@Transactional
-    public SaleProductModel addProductToSale(UUID saleId, SaleProductDto saleProductDto) {
-        SaleModel sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("Sale not found with id: " + saleId));
+	public SaleProductModel addProductToSale(UUID saleId, SaleProductDto saleProductDto) {
+		SaleModel sale = saleRepository.findById(saleId)
+				.orElseThrow(() -> new RuntimeException("Sale not found with id: " + saleId));
 
-        ProductModel product = productRepository.findById(saleProductDto.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+		ProductModel product = productRepository.findById(saleProductDto.getId())
+				.orElseThrow(() -> new RuntimeException("Product not found"));
 
-     // Check if the product is already added to the sale
-        boolean productAlreadyAdded = sale.getSaleProducts().stream()
-                .anyMatch(sp -> sp.getProduct().getId().equals(product.getId()));
+		// Check if the product is already added to the sale
+		boolean productAlreadyAdded = sale.getSaleProducts().stream()
+				.anyMatch(sp -> sp.getProduct().getId().equals(product.getId()));
 
-        if (productAlreadyAdded) {
-            throw new RuntimeException("Product " + product.getName() + " is already added to the sale.");
-        }
-        
-        if (product.getStockAmount() < saleProductDto.getAmount()) {
-            throw new RuntimeException("Insufficient stock to add product: " + product.getName());
-        }
+		if (productAlreadyAdded) {
+			throw new RuntimeException("Product " + product.getName() + " is already added to the sale.");
+		}
 
-        SaleProductModel saleProductModel = new SaleProductModel();
-        saleProductModel.setSale(sale);
-        saleProductModel.setProduct(product);
-        saleProductModel.setAmount(saleProductDto.getAmount());
-        saleProductModel.setStatus(true);
+		if (product.getStockAmount() < saleProductDto.getAmount()) {
+			throw new RuntimeException("Insufficient stock to add product: " + product.getName());
+		}
 
-        // Atualiza o estoque do produto
-        product.setStockAmount(product.getStockAmount() - saleProductModel.getAmount());
-        productRepository.save(product);
+		SaleProductModel saleProductModel = new SaleProductModel();
+		saleProductModel.setSale(sale);
+		saleProductModel.setProduct(product);
+		saleProductModel.setAmount(saleProductDto.getAmount());
+		saleProductModel.setStatus(true);
 
-        sale.getSaleProducts().add(saleProductModel);
-        saleProductRepository.save(saleProductModel);
+		// Atualiza o estoque do produto
+		product.setStockAmount(product.getStockAmount() - saleProductModel.getAmount());
+		productRepository.save(product);
 
-        // Recalcula o totalPrice da venda
-        recalculateSaleTotalPrice(sale);
+		sale.getSaleProducts().add(saleProductModel);
+		saleProductRepository.save(saleProductModel);
 
-        return saleProductModel;
-    }
+		// Recalcula o totalPrice da venda
+		recalculateSaleTotalPrice(sale);
+
+		return saleProductModel;
+	}
 
 	private void recalculateSaleTotalPrice(SaleModel sale) {
 		double totalPrice = sale.getSaleProducts().stream().filter(SaleProductModel::getStatus) // Apenas produtos

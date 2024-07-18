@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.validation.constraints.NotNull;
 
 public class SaleDto {
+	
     @NotNull
     private LocalDateTime saleDate;
 
